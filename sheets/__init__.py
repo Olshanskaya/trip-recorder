@@ -1,17 +1,14 @@
+import datetime
 from pprint import pprint
-
-import httplib2
 import apiclient
+import httplib2
 from oauth2client.service_account import ServiceAccountCredentials
-from datetime import date
-import datetime, time
 
-# Файл, полученный в Google Developer Console
+# File CREDENTIALS in Google Developer Console
 CREDENTIALS_FILE = 'expenses-calc-391417-3717f41c645c.json'
-# ID Google Sheets документа (можно взять из его URL)
-spreadsheet_id = '1QBONjulgacOEFTAGcTW69UQ1l0iOhaQQTVcpdPwfTEU'
+# ID Google Sheets
+spreadsheet_id = '1V3Xb8Rps3JsVqouIjAKwFxzcUTYxeYxAzi72gxEqxJU'
 
-# Авторизуемся и получаем service — экземпляр доступа к API
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
     CREDENTIALS_FILE,
     ['https://www.googleapis.com/auth/spreadsheets',
@@ -20,7 +17,7 @@ httpAuth = credentials.authorize(httplib2.Http())
 service = apiclient.discovery.build('sheets', 'v4', http=httpAuth)
 
 
-# Пример чтения файла
+# read file
 def start_read():
     values = service.spreadsheets().values().get(
         spreadsheetId=spreadsheet_id,
@@ -30,7 +27,7 @@ def start_read():
     pprint(values)
 
 
-# Пример записи в файл
+# write to file
 def start_write():
     values = service.spreadsheets().values().batchUpdate(
         spreadsheetId=spreadsheet_id,
@@ -50,9 +47,9 @@ def start_write():
 
 def write_new_row(message):
     row = message.text
-    messageTime = message.date
-    messageTime = datetime.datetime.utcfromtimestamp(messageTime)
-    today = messageTime.strftime('%Y-%m-%d %H:%M:%S')
+    message_time = message.date
+    message_time = datetime.datetime.utcfromtimestamp(message_time)
+    today = message_time.strftime('%Y-%m-%d %H:%M:%S')
     #today = date.today()
     values = [[row, today]]
     body = {
